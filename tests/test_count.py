@@ -4,6 +4,7 @@ import pytest
 from moto import mock_dynamodb
 
 
+# API event for lambda function
 @pytest.fixture
 def apigw_event():
     """ Generates API GW Event"""
@@ -60,12 +61,15 @@ def apigw_event():
         "path": "/examplepath",
     }
 
-
+# Test function, with the API event as parameter
 @mock_dynamodb
 def test_visitors_count(apigw_event):
+    # Import the function to test
     from visitors_count import app
+    # Mocked table name gets the same name as real table
     table_name = 'cloud-resume-challenge'
-    # Create mock DynamoDB table
+    # Create mocked DynamoDB table with same attribute name as real table
+    # The visitor item will have a value of 0
     dynamodb = boto3.resource('dynamodb', 'us-east-1')
     table = dynamodb.create_table(
         TableName=table_name,
@@ -73,11 +77,14 @@ def test_visitors_count(apigw_event):
         AttributeDefinitions=[{'AttributeName': 'ID', 'AttributeType': 'S'}],
         ProvisionedThroughput={'ReadCapacityUnits': 2, 'WriteCapacityUnits': 1}
     )
-
+    # Run the function on the mocked table and store the result
     ret = app.visitors_count(apigw_event, "")
+    # Extract the value in body from json response
     data = json.loads(ret["body"])
 
+    # Check if request succeeded
     assert ret["statusCode"] == 200
+    # Check if the function added 1 to the item value
     assert data == {"visitors": "1"}
 
 
