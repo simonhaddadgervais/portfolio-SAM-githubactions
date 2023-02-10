@@ -323,3 +323,4 @@ Finally, I also want my website files to be updated, and the old ones deleted, s
           SOURCE_DIR: resume-site
 ```
 
+![resume-design](https://user-images.githubusercontent.com/100123312/218183707-40d22fca-134d-4647-813b-2aaa5e257394.png)
